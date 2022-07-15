@@ -1,6 +1,4 @@
 const std = @import("std");
-const dot = ".".*;
-const dotdot = "..".*;
 
 const c = @cImport({
    @cInclude("unistd.h");
@@ -27,7 +25,7 @@ fn process(path: []const u8, opt_host: ?[]const u8) void {
    }
 
    var b = std.fs.path.basename(path);
-   if (std.mem.eql(u8, b, &dot) or std.mem.eql(u8, b, &dotdot)) {
+   if (std.mem.eql(u8, b, ".") or std.mem.eql(u8, b, "..")) {
       std.debug.print("{s}\n", .{r});
       return;
    }
@@ -53,7 +51,7 @@ pub fn main() anyerror!void {
     }
 
     if (args.len == 1) {
-       process(&dot, host);
+       process(".", host);
     } else {
         for (args) |arg, i| {
             if (i == 0) {
