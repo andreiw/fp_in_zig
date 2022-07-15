@@ -49,7 +49,7 @@ pub fn main() anyerror!void {
     defer std.process.argsFree(gpa, args);
 
     if (std.mem.eql(u8, std.fs.path.basename(args[0]), "sfp")) {
-       host = std.os.gethostname(&host_buf) catch "losthost";
+       host = std.os.gethostname(&host_buf) catch "localhost";
     }
 
     if (args.len == 1) {
