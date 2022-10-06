@@ -22,7 +22,7 @@ When used with no arguments, acts like pwd.
 Building
 --------
 
-    $ make
+    $ zig build
 
 Using
 -----

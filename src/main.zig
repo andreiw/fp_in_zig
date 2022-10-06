@@ -1,40 +1,40 @@
 const std = @import("std");
 
 const c = @cImport({
-   @cInclude("unistd.h");
+    @cInclude("unistd.h");
 });
 
 fn process(path: []const u8, opt_host: ?[]const u8) void {
-   var buf: [std.fs.MAX_PATH_BYTES]u8 = undefined;
-   var d = std.fs.path.dirname(path);
-   var real_d = d orelse blk: {
-      if (std.fs.path.isAbsolute(path)) {
-         break :blk "/";
-      }
+    var buf: [std.fs.MAX_PATH_BYTES]u8 = undefined;
+    var d = std.fs.path.dirname(path);
+    var real_d = d orelse blk: {
+        if (std.fs.path.isAbsolute(path)) {
+            break :blk "/";
+        }
 
-      break :blk ".";
-   };
+        break :blk ".";
+    };
 
-   var r = std.fs.realpath(real_d, &buf) catch |err| {
-      std.debug.print("{s} doesn't exist: {s}\n", .{real_d, err});
-      return;
-   };
+    var r = std.fs.realpath(real_d, &buf) catch |err| {
+        std.debug.print("{s} doesn't exist: {!}\n", .{ real_d, err });
+        return;
+    };
 
-   if (opt_host) |host| {
-      std.debug.print("{s}@{s}:", .{c.getlogin(), host});
-   }
+    if (opt_host) |host| {
+        std.debug.print("{s}@{s}:", .{ c.getlogin(), host });
+    }
 
-   var b = std.fs.path.basename(path);
-   if (std.mem.eql(u8, b, ".") or std.mem.eql(u8, b, "..")) {
-      std.debug.print("{s}\n", .{r});
-      return;
-   }
+    var b = std.fs.path.basename(path);
+    if (std.mem.eql(u8, b, ".") or std.mem.eql(u8, b, "..")) {
+        std.debug.print("{s}\n", .{r});
+        return;
+    }
 
-   if (std.mem.eql(u8, real_d, "/")) {
-      std.debug.print("/{s}\n", .{b});   
-   } else {
-      std.debug.print("{s}/{s}\n", .{r, b});
-   }
+    if (std.mem.eql(u8, real_d, "/")) {
+        std.debug.print("/{s}\n", .{b});
+    } else {
+        std.debug.print("{s}/{s}\n", .{ r, b });
+    }
 }
 
 pub fn main() anyerror!void {
@@ -47,15 +47,15 @@ pub fn main() anyerror!void {
     defer std.process.argsFree(gpa, args);
 
     if (std.mem.eql(u8, std.fs.path.basename(args[0]), "sfp")) {
-       host = std.os.gethostname(&host_buf) catch "localhost";
+        host = std.os.gethostname(&host_buf) catch "localhost";
     }
 
     if (args.len == 1) {
-       process(".", host);
+        process(".", host);
     } else {
         for (args) |arg, i| {
             if (i == 0) {
-               continue;
+                continue;
             }
             process(arg, host);
         }
