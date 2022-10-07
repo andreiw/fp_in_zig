@@ -1,7 +1,7 @@
 const std = @import("std");
 
 const c = @cImport({
-    @cInclude("unistd.h");
+    @cInclude("stdlib.h");
 });
 
 fn process(path: []const u8, opt_host: ?[]const u8) void {
@@ -21,7 +21,9 @@ fn process(path: []const u8, opt_host: ?[]const u8) void {
     };
 
     if (opt_host) |host| {
-        std.debug.print("{s}@{s}:", .{ c.getlogin(), host });
+	var login: ?[*:0] const u8 = c.getenv("LOGNAME");
+
+        std.debug.print("{s}@{s}:", .{ login orelse "<unknown>", host });
     }
 
     var b = std.fs.path.basename(path);
